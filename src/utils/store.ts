@@ -1,15 +1,13 @@
 import { Low, JSONFile } from 'lowdb';
 
-interface StoreT {
-  files: File[];
+interface IStore {
+  files: Record<string, File>[];
 }
 
 interface File {
-  fileNameExtensionNanoid: {
-    fileName: string;
-    filePath: string;
-    accessedCount: number;
-  }
+  fileName: string;
+  filePath: string;
+  accessedCount: number;
 }
 
 export default class Store {
