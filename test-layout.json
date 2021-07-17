@@ -1,5 +1,9 @@
 {
-  "filename": "",
-  "file_extension": "",
-  "file_path": "whatever uuid"
+  "swaggy": {
+    "filename-extension-nanoid": {
+      "file-name": "name",
+      "file-path": "path",
+      "accessed-count": 0
+    }
+  }
 }
