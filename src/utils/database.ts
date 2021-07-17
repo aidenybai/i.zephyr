@@ -1,20 +1,10 @@
-import { Low, JSONFile } from 'lowdb';
+import * as LowDB from 'lowdb';
 
-interface IStore {
-  files: Record<string, File>[];
-}
-
-interface File {
-  fileName: string;
-  filePath: string;
-  accessedCount: number;
-}
-
-export default class Store {
-  store: Low;
+export class Database {
+  store: LowDB.Low;
 
   constructor(fileName: string) {
-    const store = new Low(new JSONFile(fileName)) as Low<unknown>;
+    const store = new LowDB.Low(new LowDB.JSONFile(fileName)) as LowDB.Low<unknown>;
     this.store = store;
   }
 
