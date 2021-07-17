@@ -1,1 +1,12 @@
-curl -X POST -F upload=@test_images/funny.jpeg http://127.0.0.1:8080
+# `i.zephyr`
+
+```sh
+# Start development server
+yarn dev
+
+# Build distribution files
+yarn build
+
+# Start server with distribution files
+yarn start
+```

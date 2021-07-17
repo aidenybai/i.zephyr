@@ -1,23 +1,27 @@
-import * as LowDB from 'lowdb';
+import { JsonDB } from 'node-json-db';
+import { Config } from 'node-json-db/dist/lib/JsonDBConfig';
+import { File } from './file';
 
 export class Database {
-  store: LowDB.Low;
+  store: JsonDB;
 
   constructor(fileName: string) {
-    const store = new LowDB.Low(new LowDB.JSONFile(fileName)) as LowDB.Low<unknown>;
-    this.store = store;
+    this.store = new JsonDB(new Config(fileName, true, false, '/'));
   }
 
-  async init() {
-    await this.store.read();
-    this.store.data ||= {};
+  get(name: string): File {
+    return this.store.getData(`/${name}`);
   }
 
-  get(name: string): unknown {
-    return new Function(`this.store.data.${name}`)();
+  has(name: string): boolean {
+    return !!this.get(name);
   }
 
-  set(name: string, value: unknown) {
-    new Function('value', `this.store.data.${name} = value`)(value);
+  set(name: string, value: unknown): void {
+    this.store.push(`/${name}`, value);
+  }
+
+  delete(name: string): void {
+    this.store.delete(`/${name}`);
   }
 }

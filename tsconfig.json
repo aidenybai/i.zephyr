@@ -3,7 +3,7 @@
     "lib": ["es2016", "es2017.object", "esnext"],
     "outDir": "dist",
     "moduleResolution": "node",
-    "module": "esnext",
+    "module": "commonjs",
     "target": "esnext",
     "suppressImplicitAnyIndexErrors": true,
     "allowSyntheticDefaultImports": true,
