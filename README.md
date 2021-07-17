@@ -1,0 +1,1 @@
+curl -X POST -F upload=@test_images/funny.jpeg http://127.0.0.1:8080
