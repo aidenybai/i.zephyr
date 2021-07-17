@@ -6,7 +6,8 @@
   "author": "Will Lane <williamlane923@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "fastify": "^3.19.1"
+    "fastify": "^3.19.1",
+    "lowdb": "^2.1.0"
   },
   "scripts": {
     "dev": "nodemon --exec yarn ts-node index.ts",
