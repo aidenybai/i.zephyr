@@ -1,18 +1,35 @@
 {
   "name": "i.zephyr",
   "version": "1.0.0",
-  "main": "src/index.ts",
-  "repository": "https://github.com/aidenybai/i.zephyr",
-  "author": "Will Lane <williamlane923@gmail.com>",
-  "license": "MIT",
+  "description": "",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
   "scripts": {
-    "dev": "nodemon --exec yarn ts-node src/index.ts"
+    "test": "tap \"test/**/*.test.js\"",
+    "start": "fastify start -l info app.js",
+    "dev": "fastify start -w -l info -P app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aidenybai/i.zephyr.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aidenybai/i.zephyr/issues"
+  },
+  "homepage": "https://github.com/aidenybai/i.zephyr#readme",
+  "dependencies": {
+    "fastify": "^3.0.0",
+    "fastify-plugin": "^3.0.0",
+    "fastify-autoload": "^3.3.1",
+    "fastify-sensible": "^3.1.0",
+    "fastify-cli": "^2.13.0"
   },
   "devDependencies": {
-    "@types/node": "^16.3.3",
-    "nodemon": "^2.0.12",
-    "ts-node": "^10.1.0",
-    "tsc": "^2.0.3",
-    "typescript": "^4.3.5"
+    "tap": "^15.0.9"
   }
 }
