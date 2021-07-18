@@ -38,9 +38,9 @@ server.get('/:store', async (req, res) => {
   if (query.search) {
     const fuse = new Fuse(Object.keys(database.get(params.store)));
     res.send(fuse.search(query.search).map((results: any) => results.item));
-  } else {
-    res.send(Object.keys(database.get(params.store)));
+    return;
   }
+  res.send(Object.keys(database.get(params.store)));
 });
 
 server.post('/:store', async (req, res) => {
