@@ -1,4 +1,5 @@
 use clap::Clap;
+use std::io::ErrorKind::NotFound;
 use std::{path::PathBuf, process::Command};
 
 // curl -X POST -F upload=@database/funny-hqw.jpeg http://127.0.0.1:8080
@@ -15,7 +16,7 @@ fn main() {
     let opts = Opts::parse();
 
     for file in opts.files {
-        let output = Command::new("curl")
+        match Command::new("curl")
             .args(&[
                 "-X",
                 "POST",
@@ -24,9 +25,18 @@ fn main() {
                 &format!("{}{}", opts.url, opts.store),
             ])
             .output()
-            .unwrap();
-
-        println!("Upload Status: {}", output.status);
-        println!("File Data: {}", String::from_utf8_lossy(&output.stdout));
+        {
+            Ok(output) => {
+                println!("Upload Status: {}", output.status);
+                println!("File Data: {}", String::from_utf8_lossy(&output.stdout));
+            }
+            Err(err) => {
+                if let NotFound = err.kind() {
+                    eprintln!("Could not find curl, please install");
+                } else {
+                    eprintln!("{:?}", err.kind())
+                }
+            }
+        };
     }
 }
