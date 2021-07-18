@@ -14,7 +14,13 @@ export class Database {
   }
 
   has(name: string): boolean {
-    return !!this.get(name);
+    try {
+      this.store.getData(`/${name}`);
+      return true;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
   }
 
   set(name: string, value: unknown): void {

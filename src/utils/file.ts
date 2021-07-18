@@ -6,9 +6,8 @@ export interface Store {
 }
 
 export interface File {
-  fileName: string;
-  filePath: string;
-  accessedCount: number;
+  name: string;
+  path: string;
 }
 
 export const createCodedFileName = (fileName: string): string => {
@@ -18,7 +17,6 @@ export const createCodedFileName = (fileName: string): string => {
 };
 
 export const createFileObject = (codedFileName: string, codedFilePath: string): File => ({
-  fileName: codedFileName,
-  filePath: codedFilePath,
-  accessedCount: 0,
+  name: codedFileName,
+  path: codedFilePath,
 });
