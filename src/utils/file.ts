@@ -8,6 +8,7 @@ export interface Store {
 export interface File {
   name: string;
   path: string;
+  timestamp: number;
 }
 
 export const createCodedFileName = (fileName: string): string => {
@@ -19,4 +20,5 @@ export const createCodedFileName = (fileName: string): string => {
 export const createFileObject = (codedFileName: string, codedFilePath: string): File => ({
   name: codedFileName,
   path: codedFilePath,
+  timestamp: Date.now(),
 });

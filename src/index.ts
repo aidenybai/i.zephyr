@@ -13,7 +13,6 @@ import { createCodedFileName, createFileObject, File } from './utils/file';
 
 const server = fastify();
 const database = new Database('database/database');
-const databaseMemo = new Map();
 
 server.register(multiPart);
 server.register(serve, {
@@ -33,25 +32,14 @@ server.get('/ping', async () => {
   return 'Pong!';
 });
 
-server.get('/:store/:file', (req, res) => {
+server.get('/:store', async (req, res) => {
   const params = req.params as Record<string, string>;
-  const fileDatabasePath = `${params.store}/${params.file}`;
-  // ?cache=true
-  if (databaseMemo.has(fileDatabasePath) && (req.query as Record<string, string>).cache) {
-    res.sendFile(fileDatabasePath);
-    return;
-  }
-  if (database.has(fileDatabasePath)) {
-    const payload = database.get(fileDatabasePath).path;
-    databaseMemo.set(fileDatabasePath, payload);
-    res.sendFile(payload);
+  const query = req.query as Record<string, string>;
+  if (query.search) {
+    const fuse = new Fuse(Object.keys(database.get(params.store) as unknown as File[]));
+    res.send(fuse.search(query.search).map((results: any) => results.item));
   } else {
-    const fuse = new Fuse(
-      (database.get(params.file) as unknown as File[]).map((file: File) => file.path),
-    );
-    const payload = { file: [fuse.search(params.file).map((results: any) => results.item)] };
-    databaseMemo.set(fileDatabasePath, payload);
-    res.send(payload);
+    res.send(Object.keys(database.get(params.store)));
   }
 });
 
@@ -79,7 +67,7 @@ server.post('/:store', async (req, res) => {
 
     fs.writeFileSync(codedFilePath, await part.toBuffer());
     database.set(`${storeParam}/${codedFileName}`, fileObject);
-    payload.push({ file: `https://i.zephyr/${storeParam}/${codedFileName}` });
+    payload.push(`https://i.zephyr/${storeParam}/${codedFileName}`);
   }
   res.send(payload);
 });

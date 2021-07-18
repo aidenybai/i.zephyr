@@ -21,7 +21,10 @@ Code example:
 ### API Reference
 
 - **POST** `/:store` -- Upload file to server
+- **GET** `/:store` -- Get files under store (Optional `?search` query param)
 - **GET** `/:store/:file` -- Get file from server
+
+<small>Any questions? Ask Aiden/Will!</small>
 
 <style>
 /**
