@@ -21,10 +21,11 @@ server.register(caching);
 
 server.register(compress, { global: true });
 
+const rootFile = fs.readFileSync(path.join(__dirname, './welcome.md'), 'utf8').toString();
+
 server.get('/', async (_req, res) => {
-  const file = fs.readFileSync(path.join(__dirname, './welcome.md'), 'utf8');
   res.type('text/html');
-  res.send(marked(file.toString()));
+  res.send(marked(rootFile));
 });
 
 server.get('/ping', async () => {
