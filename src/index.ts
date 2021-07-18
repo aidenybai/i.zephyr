@@ -46,33 +46,71 @@ server.get('/:store', async (req, res) => {
 server.post('/:store', async (req, res) => {
   const parts = req.files();
   const payload = [];
+  const params = req.params as Record<string, string>;
   for await (const part of parts) {
-    const codedFileName = createCodedFileName(part.filename);
-    const storeParam = (req.params as Record<string, string>).store;
-    if (!storeParam) {
+    const codedFileName = createCodedFileName(
+      part.filename,
+      !!(req.body as Record<string, string>).raw,
+    );
+    if (!params.store) {
       res.send({ error: 'Must have store parameter' });
       return;
     }
-    const codedFilePath = path.join(__dirname, '../', `./database/${storeParam}/${codedFileName}`);
+    const codedFilePath = path.join(
+      __dirname,
+      '../',
+      `./database/${params.store}/${codedFileName}`,
+    );
     const fileObject = createFileObject(codedFileName, codedFilePath);
 
     try {
       fs.openSync(codedFilePath, 'wx');
     } catch {
-      fs.mkdir(path.join(__dirname, '../', `./database/${storeParam}`), (_err) => {
-        res.send({ error: `Store: ${storeParam} already exists` });
+      fs.mkdir(path.join(__dirname, '../', `./database/${params}`), (_err) => {
+        res.send({ error: `Store: ${params.store} already exists` });
         return;
       });
     }
 
     fs.writeFileSync(codedFilePath, await part.toBuffer());
-    database.set(`${storeParam}/${codedFileName}`, fileObject);
-    payload.push(`https://i.zephyr/${storeParam}/${codedFileName}`);
+    database.set(`${params.store}/${codedFileName}`, fileObject);
+    payload.push(`https://i.zephyr/${params.store}/${codedFileName}`);
   }
   res.send(payload);
 });
 
-server.listen(8080, (err: Error, address: string) => {
+server.put('/:store/:file', async (req, res) => {
+  const part = await req.file();
+  const params = req.params as Record<string, string>;
+  const payload = [];
+  if (!params.store) {
+    res.send({ error: 'Must have store parameter' });
+    return;
+  }
+  const filePath = path.join(__dirname, '../', `./database/${params.store}/${params.file}`);
+  const fileObject = createFileObject(params.file, filePath);
+
+  fs.writeFileSync(filePath, await part.toBuffer());
+  database.set(`${params.store}/${params.file}`, fileObject);
+  payload.push(`https://i.zephyr/${params.store}/${params.file}`);
+  res.send(payload);
+});
+
+server.delete('/:store/:file', async (req, res) => {
+  const params = req.params as Record<string, string>;
+  const payload = [];
+  if (!params.store) {
+    res.send({ error: 'Must have store parameter' });
+    return;
+  }
+  const filePath = path.join(__dirname, '../', `./database/${params.store}/${params.file}`);
+
+  fs.unlinkSync(filePath);
+  payload.push(`https://i.zephyr/${params.store}/${params.file}`);
+  res.send(payload);
+});
+
+server.listen(process.env.PORT || 8080, (err: Error, address: string) => {
   if (err) {
     console.error(err);
     process.exit(1);
