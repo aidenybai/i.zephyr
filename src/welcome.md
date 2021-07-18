@@ -1,4 +1,6 @@
-# Welcome to `i.zephyr`!
+# `i.zephyr`
+
+The static-file hosting service that'll work like a breeze (S3 for ZephyrNET).
 
 ### Try it out!
 
@@ -18,9 +20,15 @@ Code example:
 </form>
 ```
 
+### Features
+
+- **Fast + Lightweight**: `i.zephyr` is written in Fastify.js, one of the fastest Node.js server libraries, along with aggressive caching.
+- **Simple API**: With only 3 routes, accessing and uploading files is extremely easy.
+- **Powerful**: `i-zephyr` supports batch uploads, fuzzy searching, and more!
+
 ### API Reference
 
-- **POST** `/:store` -- Upload file to server
+- **POST** `/:store` -- Upload file(s) to server
 - **GET** `/:store` -- Get files under store (Optional `?search` query param)
 - **GET** `/:store/:file` -- Get file from server
 
