@@ -2,11 +2,21 @@
 
 ### Try it out!
 
-<form action="/orpheus-lounge" method="post" enctype="multipart/form-data">
+<form action="/orpheus-lounge" method="post" enctype="multipart/form-data" target="_blank">
+  <label>Choose file to upload:</label>
+  <input type="file" multiple name="file" />
+  <button>Submit</button>
+</form>
+
+Code example:
+
+```html
+<form action="/orpheus-lounge" method="post" enctype="multipart/form-data" target="_blank">
   <label>Choose file to upload</label>
   <input type="file" multiple name="file" />
   <button>Submit</button>
 </form>
+```
 
 ### API Reference
 
