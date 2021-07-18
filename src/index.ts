@@ -32,18 +32,22 @@ server.get('/ping', async () => {
 });
 
 server.post('/:store', async (req, res) => {
-  const data = await req.file();
-  const codedFileName = createCodedFileName(data.filename);
-  const storeParam = (req.params as Record<string, string>).store;
-  const codedFilePath = path.join(__dirname, '../', `./database${storeParam}/${codedFileName}`);
-  const fileObject = createFileObject(codedFileName, codedFilePath);
+  const parts = req.files();
+  const payload = [];
+  for await (const part of parts) {
+    const codedFileName = createCodedFileName(part.filename);
+    const storeParam = (req.params as Record<string, string>).store;
+    const codedFilePath = path.join(__dirname, '../', `./database${storeParam}/${codedFileName}`);
+    const fileObject = createFileObject(codedFileName, codedFilePath);
 
-  fs.openSync(codedFilePath, 'wx');
-  fs.writeFileSync(codedFilePath, await data.toBuffer());
+    fs.openSync(codedFilePath, 'wx');
+    fs.writeFileSync(codedFilePath, await part.toBuffer());
 
-  database.set(`${storeParam}/${codedFileName}`, fileObject);
+    database.set(`${storeParam}/${codedFileName}`, fileObject);
 
-  res.send({ file: `${req.url}${storeParam}/${codedFileName}` });
+    payload.push({ file: `${req.url}${storeParam}/${codedFileName}` });
+  }
+  res.send(payload);
 });
 
 server.listen(8080, (err: Error, address: string) => {
