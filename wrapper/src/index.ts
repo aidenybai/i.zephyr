@@ -1,12 +1,9 @@
-export const get = async (store: string, fileName: string, url: string = 'https://i.zephyr/') => {
-
+export const search = async (store: string, fuz: string, url: string = 'https://i.zephyr/'): Promise<Record<string, string>[]> => {
+  return fetch(`${url}${store}?search=${fuz}`)
+    .then(r => r.json());
 }
 
-export const search = async (store: string, fuz: string, url: string = 'https://i.zephyr/') => {
-
-}
-
-export const upload = async (store: string, data: any, url: string = 'https://i.zephyr/'): Promise<Record<string, string>[]> => {
+export const upload = async (store: string, data: any[], url: string = 'https://i.zephyr/'): Promise<Record<string, string>[]> => {
   const formData = new FormData();
   for (const name of data) {
     formData.append(name, data[name]);
