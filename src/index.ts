@@ -36,7 +36,7 @@ server.get('/:store', async (req, res) => {
   const params = req.params as Record<string, string>;
   const query = req.query as Record<string, string>;
   if (query.search) {
-    const fuse = new Fuse(Object.keys(database.get(params.store) as unknown as File[]));
+    const fuse = new Fuse(Object.keys(database.get(params.store)));
     res.send(fuse.search(query.search).map((results: any) => results.item));
   } else {
     res.send(Object.keys(database.get(params.store)));
