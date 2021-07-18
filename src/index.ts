@@ -9,7 +9,7 @@ import marked from 'marked';
 import path from 'path';
 import Fuse from 'fuse.js';
 import { Database } from './utils/database';
-import { createCodedFileName, createFileObject, File } from './utils/file';
+import { createCodedFileName, createFileObject } from './utils/file';
 
 const server = fastify();
 const database = new Database('database/database');
