@@ -50,7 +50,7 @@ server.post('/:store', async (req, res) => {
   for await (const part of parts) {
     const codedFileName = createCodedFileName(
       part.filename,
-      !!(req.body as Record<string, string>).raw,
+      !!(req.query as Record<string, string>).raw,
     );
     if (!params.store) {
       res.send({ error: 'Must have store parameter' });
@@ -66,7 +66,7 @@ server.post('/:store', async (req, res) => {
     try {
       fs.openSync(codedFilePath, 'wx');
     } catch {
-      fs.mkdir(path.join(__dirname, '../', `./database/${params}`), (_err) => {
+      fs.mkdir(path.join(__dirname, '../', `./database/${params.store}`), (_err) => {
         res.send({ error: `Store: ${params.store} already exists` });
         return;
       });
