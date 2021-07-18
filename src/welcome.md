@@ -1,40 +1,17 @@
 # Welcome to `i.zephyr`!
 
-### Methods
+### Try it out!
 
-POST /:store -- Upload file to server
+<form action="/orpheus-lounge" method="post" enctype="multipart/form-data">
+  <label>Choose file to upload</label>
+  <input type="file" multiple name="file" />
+  <button>Submit</button>
+</form>
 
-**Example:**
+### API Reference
 
-```js
-(async () => {
-  const formData = new FormData();
-  const store = 'myExampleStoreName';
-  // Append files to form data
-
-  const res = await fetch(`https://i.zephyr/${store}`, {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: formData,
-  });
-  const body = await res.json();
-
-  console.log(body.file); // your file url
-})();
-```
-
-GET /:store/:file -- Get file from server
-
-**Example:**
-
-```html
-<img src="https://i.zephyr/hq-sucks-69420.exe" />
-```
-
-_Psst... Have a question or problem? Go ask Aiden and Will for assistance._
+- **POST** `/:store` -- Upload file to server
+- **GET** `/:store/:file` -- Get file from server
 
 <style>
 /**

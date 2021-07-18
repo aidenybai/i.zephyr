@@ -2,7 +2,7 @@ import fastify from 'fastify';
 // @ts-expect-error No types for this package
 import caching from 'fastify-caching';
 import compress from 'fastify-compress';
-import fastifyMultiPart from 'fastify-multipart';
+import multiPart from 'fastify-multipart';
 import serve from 'fastify-static';
 import fs from 'fs';
 import marked from 'marked';
@@ -13,7 +13,7 @@ import { createCodedFileName, createFileObject } from './utils/file';
 const server = fastify();
 const database = new Database('database/database');
 
-server.register(fastifyMultiPart);
+server.register(multiPart);
 server.register(serve, {
   root: path.join(__dirname, '../', './database'),
 });
@@ -21,11 +21,11 @@ server.register(caching);
 
 server.register(compress, { global: true });
 
-const rootFile = fs.readFileSync(path.join(__dirname, './welcome.md'), 'utf8').toString();
+const welcome = marked(fs.readFileSync(path.join(__dirname, './welcome.md'), 'utf8').toString());
 
 server.get('/', async (_req, res) => {
   res.type('text/html');
-  res.send(marked(rootFile));
+  res.send(welcome);
 });
 
 server.get('/ping', async () => {
@@ -33,33 +33,40 @@ server.get('/ping', async () => {
 });
 
 server.post('/:store', async (req, res) => {
-  const parts = req.files();
-  const payload = [];
-  for await (const part of parts) {
-    const codedFileName = createCodedFileName(part.filename);
-    const storeParam = (req.params as Record<string, string>).store;
-    if (!storeParam) {
-      res.send({ error: "Must have store parameter" });
-      return;
-    }
-    const codedFilePath = path.join(__dirname, '../', `./database/${storeParam}/${codedFileName}`);
-    const fileObject = createFileObject(codedFileName, codedFilePath);
-
-    try {
-      fs.openSync(codedFilePath, 'wx');
-    } catch {
-      fs.mkdir(path.join(__dirname, '../', `./database/${storeParam}`), (_err) => {
-        res.send({ error: `Store: ${storeParam} already exists` });
+  try {
+    const parts = req.files();
+    const payload = [];
+    for await (const part of parts) {
+      const codedFileName = createCodedFileName(part.filename);
+      const storeParam = (req.params as Record<string, string>).store;
+      if (!storeParam) {
+        res.send({ error: 'Must have store parameter' });
         return;
-      });
+      }
+      const codedFilePath = path.join(
+        __dirname,
+        '../',
+        `./database/${storeParam}/${codedFileName}`,
+      );
+      const fileObject = createFileObject(codedFileName, codedFilePath);
+
+      try {
+        fs.openSync(codedFilePath, 'wx');
+      } catch {
+        fs.mkdir(path.join(__dirname, '../', `./database/${storeParam}`), (_err) => {
+          res.send({ error: `Store: ${storeParam} already exists` });
+          return;
+        });
+      }
+
+      fs.writeFileSync(codedFilePath, await part.toBuffer());
+      database.set(`${storeParam}/${codedFileName}`, fileObject);
+      payload.push({ file: `https://i.zephyr/${storeParam}/${codedFileName}` });
     }
-    fs.writeFileSync(codedFilePath, await part.toBuffer());
-
-    database.set(`${storeParam}/${codedFileName}`, fileObject);
-
-    payload.push({ file: `${storeParam}/${codedFileName}` });
+    res.send(payload);
+  } catch (err) {
+    console.error(err);
   }
-  res.send(payload);
 });
 
 server.listen(8080, (err: Error, address: string) => {
